@@ -566,6 +566,7 @@ module ClangHelpers = struct
   (* Recognize several common patterns for the null pointer *)
   let rec is_null (e : expr) =
     match e.desc with
+    | NullPtrLiteral -> true
     | Cast
         {
           qual_type = { desc = Pointer { desc = BuiltinType Void; _ }; _ };
@@ -988,7 +989,6 @@ and translate_expr (env : env) ?(must_return_value = false) (e : Clang.Ast.expr)
       end
     | ImaginaryLiteral _ -> failwith "translate_expr: imaginary literal"
     | BoolLiteral b -> with_type TBool (EBool b)
-    | NullPtrLiteral -> failwith "translate_expr: null ptr literal"
     | CompoundLiteral { qual_type; init = { desc = InitList _l; _ } }
       when is_constantarray qual_type ->
         failwith "FIXME: reinstante this case and understand why it was needed"
