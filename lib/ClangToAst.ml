@@ -978,9 +978,16 @@ and translate_expr (env : env) ?(must_return_value = false) (e : Clang.Ast.expr)
         | t -> fatal_error "float literal does not have a float type, it has %a" ptyp t
       end
     | StringLiteral _ -> failwith "translate_expr: string literal"
-    | CharacterLiteral _ -> failwith "translate_expr character literal"
+    | CharacterLiteral { value; kind } -> begin
+        (match kind with
+        | Ascii | UTF8 -> ()
+        | _ -> failwith "translate_expr: wide character literals are not supported");
+        match typ_from_clang e with
+        | TInt w as t -> with_type t (EConstant (w, string_of_int value))
+        | t -> fatal_error "character literal does not have a character type, it has %a" ptyp t
+      end
     | ImaginaryLiteral _ -> failwith "translate_expr: imaginary literal"
-    | BoolLiteral _ -> failwith "translate_expr: bool literal"
+    | BoolLiteral b -> with_type TBool (EBool b)
     | NullPtrLiteral -> failwith "translate_expr: null ptr literal"
     | CompoundLiteral { qual_type; init = { desc = InitList _l; _ } }
       when is_constantarray qual_type ->
@@ -1252,7 +1259,7 @@ and translate_expr (env : env) ?(must_return_value = false) (e : Clang.Ast.expr)
         (* Is this only called on rvalues? Otherwise, might need EBufWrite *)
         with_type (assert_tbuf_or_tarray base.typ) (EBufRead (base, index))
     | ConditionalOperator { cond; then_branch; else_branch } ->
-        let cond = translate_expr env cond in
+        let cond = adjust (translate_expr env cond) TBool in
         let else_branch = translate_expr env else_branch in
         let then_branch =
           match then_branch with
@@ -1262,7 +1269,7 @@ and translate_expr (env : env) ?(must_return_value = false) (e : Clang.Ast.expr)
           | Some e -> adjust (translate_expr env e) else_branch.typ
         in
         with_type else_branch.typ (EIfThenElse (cond, then_branch, else_branch))
-    | Paren _ -> failwith "translate_expr: paren"
+    | Paren e -> translate_expr env ?must_return_value e
     | Member { base; arrow; field } ->
         let base =
           match base with

@@ -5,8 +5,8 @@ description: "C to Rust translator, reusing the KaRaMeL infrastructure"
 maintainer: ["Aymeric Fromherz" "Jonathan Protzenko"]
 authors: ["Aymeric Fromherz" "Jonathan Protzenko"]
 license: "Apache-2.0"
-homepage: "https://github.com/AeneasVerif/scylla"
-bug-reports: "https://github.com/AeneasVerif/scylla/issues"
+homepage: "https://github.com/jsdevninja/scylla"
+bug-reports: "https://github.com/jsdevninja/scylla/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.13"}
@@ -26,4 +26,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/AeneasVerif/scylla.git"
+dev-repo: "git+https://github.com/jsdevninja/scylla.git"

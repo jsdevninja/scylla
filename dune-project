@@ -5,7 +5,7 @@
 (generate_opam_files true)
 
 (source
- (github AeneasVerif/scylla))
+ (github jsdevninja/scylla))
 
 (authors "Aymeric Fromherz" "Jonathan Protzenko")
 

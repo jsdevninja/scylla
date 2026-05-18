@@ -68,7 +68,7 @@ opam init
 
 # Step 2: clone the two repositories side by side
 git clone git@github.com:FStarLang/karamel
-git clone git@github.com:aeneasverif/scylla
+git clone git@github.com:jsdevninja/scylla
 
 # Step 3: install required OCaml packages. Note: the invocation for karamel might fail, in which
 # case you want to install all the packages in the `depends` field of karamel.opam except fstar. At
